@@ -1,0 +1,5 @@
+<?php
+
+     $date=strtotime('now');
+
+?>

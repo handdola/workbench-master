@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>ShowObject</title>
+    <meta name = "viewport"  content = "width=device-width  initial-scale=1"/>
+    <link rel = "stylesheet"  href = "https://www.w3schools.com/w3css/4/w3.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+<body>
+
+<div id="head"  class="w3-white w3-cell-row">
+    <div class = "w3-left w3-cell">
+    <div  id="tabs" class = "w3-bar w3-white">
+        <button  id="tab1"  class = "w3-bar-item w3-button tablink"> 속성 </button>
+        <button id="tab2" class = "w3-bar-item w3-button tablink">연관항목 </button>
+        <button   id="tab3"  class = "w3-bar-item w3-button tablink">연관산출물</button>
+    </div>
+    </div>
+
+    <div class = "w3-right w3-cell">
+        <div   class = "w3-bar w3-white">
+    <button id="back" class="w3-bar-item w3-button tablink"><i class="fa fa-arrow-left"></i></button>
+        </div>
+    </div>
+</div>
+
+<div id="main">
+<div id="cont" name="cont" class="w3-small"></div>
+</div>
+<!--    <div id="London"  class="w3-container w3-border city" style="display:block"> </div>
+    
+    <div id="Paris"  class="w3-container w3-border city" style="display:block"> </div>
+
+    <div id="Tokyo"  class="w3-container w3-border city" style="display:block"> </div>-->
+<script type="text/javascript" src="../example-fastopt.js"></script>
+<script type="text/javascript" src="/workbench.js"></script>
+<script>
+parser.popupview4().main(document.getElementById('cont'));
+</script>
+</body>
+</html>

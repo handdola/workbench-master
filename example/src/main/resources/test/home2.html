@@ -1,0 +1,157 @@
+<html><head><title>Interactive Storytelling</title>
+<html><head><title>Interactive Storytelling</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+    <link rel="stylesheet" href="https://www.w3schools.com/lib/w3-theme-blue-grey.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="styles/style.css">
+
+    <!-- Main Quill library -->
+    <script src="//cdn.quilljs.com/1.2.4/quill.js"></script>
+    <script src="//cdn.quilljs.com/1.2.4/quill.min.js"></script>
+
+    <!-- Theme included stylesheets -->
+    <link href="//cdn.quilljs.com/1.2.4/quill.snow.css" rel="stylesheet">
+    <link href="//cdn.quilljs.com/1.2.4/quill.bubble.css" rel="stylesheet">
+    <style>
+html,body,h1,h2,h3,h4,h5 {font-family: "Open Sans", sans-serif}
+</style>
+</head><body class="w3-theme-l5">
+
+<!-- Navbar -->
+<div class="w3-top">
+    <div class="w3-bar w3-theme-d2 w3-left-align w3-large">
+        <a class="w3-bar-item w3-button w3-hide-medium w3-hide-large w3-right w3-padding-large w3-hover-white w3-large w3-theme-d2" href="javascript:void(0);" onclick="openNav()"><i class="fa fa-bars"></i></a>
+        <a href="#" class="w3-bar-item w3-button w3-padding-large w3-theme-d4"><i class="fa fa-home w3-margin-right"></i>Logo</a>
+        <a href="#" class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white" title="News"><i class="fa fa-globe"></i></a>
+        <a href="#" class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white" title="Account Settings"><i class="fa fa-user"></i></a>
+        <a href="#" class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white" title="Messages" onclick="openGmail()"><i class="fa fa-envelope"></i></a>
+        <div class="w3-dropdown-hover w3-hide-small">
+            <button class="w3-button w3-padding-large" title="Notifications"><i class="fa fa-bell"></i><span class="w3-badge w3-right w3-small w3-green">3</span></button>
+            <div class="w3-dropdown-content w3-card-4 w3-bar-block" style="width:300px">
+                <a href="#" class="w3-bar-item w3-button">One new friend request</a>
+                <a href="#" class="w3-bar-item w3-button">John Doe posted on your wall</a>
+                <a href="#" class="w3-bar-item w3-button">Jane likes your post</a>
+            </div>
+        </div>
+        <a href="list.html" class="w3-bar-item w3-button w3-hide-small w3-right w3-padding-large w3-hover-white" title="My Account"><img src="./images/avatar2.png" class="w3-circle" style="height:25px;width:25px" alt="Avatar"></a>
+    </div>
+</div>
+
+<!-- Navbar on small screens -->
+<div id="navDemo" class="w3-bar-block w3-theme-d2 w3-hide w3-hide-large w3-hide-medium w3-large">
+    <a href="list.html" class="w3-bar-item w3-button w3-padding-large">마이홈</a>
+    <a href="list.html" class="w3-bar-item w3-button w3-padding-large">마이홈</a>
+</div>
+
+<!-- Page Container -->
+<div class="w3-container w3-content" style="max-width:1400px;margin-top:80px">
+    <!-- The Grid -->
+    <div class="w3-row">
+
+
+        <!-- Middle Column -->
+        <div class="w3-col m9">
+            <div class="w3-row-padding">
+                <div class="w3-col m10  ">
+                    <div class="w3-card-2 w3-round w3-white" >
+                        <div id="kj-main" class="w3-container w3-padding ">
+                            <div id="bodies" >
+                                <div id="first-page" class="w3-cell-row" style="width:600px;position:relative">
+                                    <div class="w3-cell  " >
+                                        <div id="pages" class="w3-mobile">
+                                        </div>
+                                    </div>
+                                    <div class="w3-cell  ">
+                                        <div id="rtoolbar" class="top-actbar w3-mobile w3-right">
+                                            <button id="pageAdd" class="w3-button w3-circle w3-red w3-small"><i class="fa fa-file-text"></i></button>
+                                            <button id="imageAdd" class="w3-button w3-circle w3-red w3-small"><i class="fa fa-image"></i></button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="w3-margin">
+                                <button type="button" id="CardSave" class="w3-button w3-theme-d1 w3-margin-bottom"><i class="fa fa-thumbs-up"></i> &nbsp;Save</button>
+                                <button type="button" id="preview" class="w3-button w3-theme-d2 w3-margin-bottom"><i class="fa fa-comment"></i> &nbsp;Preview</button>
+                                <button type="button" id="CardDelete" class="w3-button w3-theme-d2 w3-margin-bottom"><i class="fa fa-trash"></i> &nbsp;Delete</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+
+            <!-- End Middle Column -->
+        </div>
+
+
+
+
+        <!-- End Grid -->
+    </div>
+
+    <!-- End Page Container -->
+</div>
+<br>
+
+<!-- Footer -->
+<footer class="w3-container w3-theme-d3 w3-padding-16">
+    <h5>Footer</h5>
+</footer>
+
+<footer class="w3-container w3-theme-d5">
+    <p>Powered by <a href="https://www.w3schools.com/w3css/default.asp" target="_blank">w3.css</a></p>
+</footer>
+
+<script>
+// Accordion
+function myFunction(id) {
+    var x = document.getElementById(id);
+    if (x.className.indexOf("w3-show") == -1) {
+        x.className += " w3-show";
+        x.previousElementSibling.className += " w3-theme-d1";
+    } else {
+        x.className = x.className.replace("w3-show", "");
+        x.previousElementSibling.className =
+        x.previousElementSibling.className.replace(" w3-theme-d1", "");
+    }
+}
+
+// Used to toggle the menu on smaller screens when clicking on the menu button
+function openNav() {
+    var x = document.getElementById("navDemo");
+    if (x.className.indexOf("w3-show") == -1) {
+        x.className += " w3-show";
+    } else {
+        x.className = x.className.replace(" w3-show", "");
+    }
+}
+
+
+// Used to toggle the menu on smaller screens when clicking on the menu button
+
+var winRef = null;
+function openGmail() {
+
+      //winRef = dom.window.open(docBase + s"show-popup4.html?objId=$objId","SHOW_DIALOG","width=500;height=300;overflow-y=scroll")
+      //winRef.focus()
+
+      if (winRef != null ) winRef.close()
+     winRef = window.open("gmail2.html", "_blank", "toolbar=yes,scrollbars=yes,resizable=yes,top=500,left=500,width=600,height=600");
+     winRef.focus();
+}
+
+</script>
+<script type="text/javascript" src="../example-fastopt.js"></script>
+<script type="text/javascript" src="/workbench.js"></script>
+<script>
+    cardnews.cncreate2().main(document.getElementById('bodies'));
+</script>
+
+
+
+
+</body></html>

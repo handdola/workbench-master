@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>카드뉴스</title>
+    <meta name = "viewport"  content = "width=device-width  initial-scale=1"/>
+    <link rel = "stylesheet"  href = "https://www.w3schools.com/w3css/4/w3.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <!-- Main Quill library -->
+    <script src="//cdn.quilljs.com/1.2.4/quill.js"></script>
+    <script src="//cdn.quilljs.com/1.2.4/quill.min.js"></script>
+
+    <!-- Theme included stylesheets -->
+    <link href="//cdn.quilljs.com/1.2.4/quill.snow.css" rel="stylesheet">
+    <link href="//cdn.quilljs.com/1.2.4/quill.bubble.css" rel="stylesheet">
+
+</head>
+<body>
+
+<!-- Sidebar -->
+<div class="w3-sidebar w3-bar-block w3-card-2 w3-animate-left" style="display:none" id="mySidebar">
+    <button class="w3-bar-item w3-button"
+            onclick="w3_close()">&times;</button>
+    <a href="#" class="w3-bar-item w3-button">Link 1</a>
+</div>
+
+<div zclass="w3-main" id="main1">
+
+    <div class="w3-teal">
+        <button class="w3-button w3-teal" onclick="w3_open()">&#9776;</button>
+        <button id="back" class="w3-button w3-right"><i class="fa fa-arrow-left"></i></button>
+    </div>
+
+<!-- Page Content -->
+<div style="margin-left:25%">
+
+    <div id="main w3-container w3-content">
+        <div id="bodies" style="width:480px">
+        <div class="w3-cell-row">
+            <div class="w3-cell">
+                <div id="pages" class="w3-mobile" style="width:300px">
+                    <div class="w3-center">
+                    </div>
+                </div>
+            </div>
+            <div class="w3-cell">
+                <div id="rtoolbar" class="kj-actbar w3-mobile">
+                    <button id="pageAdd" class="w3-button w3-circle w3-red w3-small"><i class="fa fa-file-text"></i></button>
+                    <button id="imageAdd" class="w3-button w3-circle w3-red w3-small"><i class="fa fa-image"></i></button>
+                </div>
+            </div>
+        </div>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    function w3_open() {
+    document.getElementById("main1").style.marginLeft = "25%";
+    document.getElementById("mySidebar").style.width = "25%";
+    document.getElementById("mySidebar").style.display = "block";
+    document.getElementById("openNav").style.display = 'none';
+    }
+    function w3_close() {
+    document.getElementById("main1").style.marginLeft = "0%";
+    document.getElementById("mySidebar").style.display = "none";
+    document.getElementById("openNav").style.display = "inline-block";
+    }
+ </script>
+<script type="text/javascript" src="../example-fastopt.js"></script>
+<script type="text/javascript" src="/workbench.js"></script>
+<script>
+    cardnews.cncreate().main(document.getElementById('bodies'));
+</script>
+</body>
+</html>

@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<ol contenteditable oninput="">
+  <li>Press enter</li>
+</ol>
+<script>
+  var MutationObserver = window.MutationObserver || window.WebKitMutationObserver || window.MozMutationObserver;
+  var list = document.querySelector('ol');
+ 
+  var observer = new MutationObserver(function(mutations) {
+    mutations.forEach(function(mutation) {
+	  console.log(mutation.type);
+      if (mutation.type === 'childList') {
+        var list_values = [].slice.call(list.children)
+            .map( function(node) { return node.innerHTML; })
+            .filter( function(s) {
+              if (s === '<br />') {
+                return false;
+              }
+              else {
+                return true;
+              }
+        });
+        console.log(list_values);
+      }
+    });
+  });
+ 
+  observer.observe(list, {
+  	attributes: true,
+  	childList: true,
+  	characterData: true
+   });
+</script>

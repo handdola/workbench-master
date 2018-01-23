@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Cropper.js</title>
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+    <link rel="stylesheet" href="https://www.w3schools.com/lib/w3-theme-blue-grey.css">
+    <link rel="stylesheet" href="http://jcrop-cdn.tapmodo.com/v0.9.12/css/jquery.Jcrop.min.css">
+    <style>
+    .img-container img {
+      max-width: 100%;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Cropper in a Bootstrap modal</h1>
+
+    <!-- Button trigger modal -->
+    <button type="button" onclick="toggleNav();">
+        Launch the demo
+    </button>
+
+    <!-- Modal -->
+    <div id="CropIt" class="w3-modal">
+        <div class="w3-modal-content">
+            <div class="w3-container kj-modal-header">
+            <span onclick="toggleNav();"
+                  class="w3-button w3-large w3-border ">&times;</span>
+            </div>
+            <div class="w3-container kj-modal-crop">
+                <img id="theCropImage" src="../images/nature.jpg" alt="Picture">
+                <canvas id="preview" style="width:400px;height:400px"></canvas>
+            </div>
+            <div class="w3-container kj-modal-footer"><button id="CropItBtn" onclick="completeNav()" class="w3-button w3-border  w3-margin-top w3-small">Done</button>
+            </div>
+        </div>
+    </div>
+
+
+</div>
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
+<script src="http://jcrop-cdn.tapmodo.com/v0.9.12/js/jquery.Jcrop.min.js"></script>
+<script>
+    var jcrop_api;
+function toggleNav() {
+    var x = document.getElementById("CropIt");
+    if (x.className.indexOf("w3-show") == -1) {
+        x.className += " w3-show";
+        $('#theCropImage').Jcrop({
+            onChange : updatePreview,
+            onSelect : updatePreview
+	    },function(){
+            jcrop_api = this;
+        });
+    } else {
+        x.className = x.className.replace(" w3-show", "");
+        jcrop_api.destroy();
+    }
+}
+function completeNav() {
+    var x = document.getElementById("CropIt");
+	var imageObj = $("#theCropImage")[0];
+	var canvas = $("#preview")[0];
+	var context = canvas.getContext("2d");
+	context.drawImage(imageObj, 0,0,100, 100);
+	var dataURL = canvas.toDataURL("image/jpeg");
+console.log(dataURL);
+	$('#theCropImage').src = dataURL;
+
+    //x.className = x.className.replace(" w3-show", "");
+
+    //jcrop_api.destroy();
+    //CliptoImage();
+}
+
+function updatePreview(c) {
+	if(parseInt(c.w) > 0) {
+		// Show image preview
+		var imageObj = $("#theCropImage")[0];
+		var canvas = $("#preview")[0];
+		var context = canvas.getContext("2d");
+		//context.drawImage(imageObj, c.x, c.y, c.w, c.h, 0, 0, canvas.width,canvas.height);
+
+	}
+};
+
+  </script>
+</body>
+</html>

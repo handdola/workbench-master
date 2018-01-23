@@ -1,0 +1,299 @@
+<html><head><title>StoryFactory</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=0.9">
+
+
+    <meta property="og:title" content="StoryFactory" />
+    <meta property="og:description" content="StoryFactory LIST 데모입니다" />
+    <meta property="og:image" content="./images/avatar3.png" />
+    <meta property="og:image:width" content="450"/>
+    <meta property="og:image:height" content="298"/>
+
+
+
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+    <link rel="stylesheet" href="https://www.w3schools.com/lib/w3-theme-blue-grey.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="styles/style.css">
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.6.0/Chart.bundle.js"></script>
+    <script type="text/javascript" src="../scripts/story.common.js"></script>
+
+    <!-- Main Quill library -->
+    <script src="//cdn.quilljs.com/1.2.4/quill.js"></script>
+    <script src="//cdn.quilljs.com/1.2.4/quill.min.js"></script>
+
+    <!-- Theme included stylesheets -->
+    <link href="//cdn.quilljs.com/1.2.4/quill.snow.css" rel="stylesheet">
+    <link href="//cdn.quilljs.com/1.2.4/quill.bubble.css" rel="stylesheet">
+    <style>
+html,body,h1,h2,h3,h4,h5 {font-family: "Open Sans", sans-serif}
+</style>
+</head><body class="w3-theme-l5">
+
+<!-- Navbar -->
+<div class="w3-top">
+    <div class="w3-bar w3-theme-d2 w3-left-align w3-large">
+        <a class="w3-bar-item w3-button w3-hide-small w3-hide-medium w3-hide-large w3-right w3-padding-large w3-hover-white w3-large w3-theme-d2" href="javascript:void(0);" onclick="openNav()"><i class="fa fa-bars"></i></a>
+        <a href="post.html" class="w3-bar-item w3-button w3-padding-large w3-theme-d4"><i class="fa fa-home w3-margin-right"></i></a>
+        <a href="#" class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white" title="News"><i class="fa fa-globe"></i></a>
+        <a href="#" class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white" title="Account Settings"><i class="fa fa-user"></i></a>
+        <a href="#" class="w3-bar-item w3-button w3-padding-large w3-hover-white" title="Messages" onclick="openGmail()"><i class="fa fa-envelope"></i></a>
+        <div class="w3-dropdown-hover w3-right">
+            <button class="w3-button w3-padding-large" title="Notifications"><i class="fa fa-edit"></i></button>
+            <div class="w3-dropdown-content w3-card-4 w3-bar-block" style="right:0">
+                <a href="quiznews.html?type=storynews" class="w3-bar-item w3-button ">스토리 뉴스</a>
+                <a href="quiznews.html?type=quiznews" class="w3-bar-item w3-button " >퀴즈 뉴스</a>
+                <a href="quiznews.html?type=typetest" class="w3-bar-item w3-button " >타입 테스트</a>
+                <a href="#" class="w3-bar-item w3-button ">...</a>
+            </div>
+        </div>
+        <!--<a href="home3.html" class="w3-bar-item w3-button w3-right w3-padding-large w3-hover-white" title="My Account">스토리뉴스</a> -->
+    </div>
+</div>
+
+<!-- Navbar on small screens -->
+<div id="navDemo" class="w3-bar-block w3-theme-d2 w3-hide w3-hide-large w3-hide-medium w3-large">
+    <a href="home3.html" class="w3-bar-item w3-button w3-padding-large">생성하기</a>
+    <a href="home3.html" class="w3-bar-item w3-button w3-padding-large">생성하기</a>
+</div>
+
+<!-- Page Container -->
+<div class="w3-container w3-content" style="max-width:1400px;margin-top:80px">
+    <!-- The Modal -->
+    <div id="ShareIt" class="w3-modal">
+        <div class="w3-modal-content">
+            <div class="w3-container w3-margin-top">
+                <span onclick="document.getElementById('ShareIt').style.display='none'"
+                      class="w3-button w3-large  w3-border w3-display-topright">&times;</span>
+                <button id="LinkBtn" onclick="CopytoClip()" class="w3-button w3-border  w3-margin-top w3-small">Copy to Clipboard</button>
+                <input id="ShareURL" class="w3-margin-top w3-margin-bottom" style="width:100%" readonly> </input>
+            </div>
+        </div>
+    </div>
+
+    <!-- The Grid -->
+    <div class="w3-row">
+        <!-- Left Column -->
+        <div class="w3-col m3 w3-margin-right kj-left-col">
+            <!-- Profile -->
+            <div class="w3-card-2 w3-round w3-white">
+                <div class="w3-container">
+                    <h4 class="w3-center">KIM,KI-JUNG</h4>
+                    <p class="w3-center"><img src="./images/avatar3.png" class="w3-circle" style="height:106px;width:106px" alt="Avatar"></p>
+                    <hr>
+                    <p><i class="fa fa-pencil fa-fw w3-margin-right w3-text-theme"></i> Designer, UI</p>
+                    <p><i class="fa fa-home fa-fw w3-margin-right w3-text-theme"></i> London, UK</p>
+                    <p><i class="fa fa-birthday-cake fa-fw w3-margin-right w3-text-theme"></i> April 1, 1988</p>
+                </div>
+            </div>
+            <br>
+
+            <!-- Accordion -->
+            <div class="w3-card-2 w3-round">
+                <div class="w3-white">
+                    <button onclick="myFunction('Demo1')" class="w3-button w3-block w3-theme-l1 w3-left-align"><i class="fa fa-circle-o-notch fa-fw w3-margin-right"></i> My Groups</button>
+                    <div id="Demo1" class="w3-hide w3-container">
+                        <p>Some text..</p>
+                    </div>
+                    <button onclick="myFunction('Demo2')" class="w3-button w3-block w3-theme-l1 w3-left-align"><i class="fa fa-calendar-check-o fa-fw w3-margin-right"></i> My Events</button>
+                    <div id="Demo2" class="w3-hide w3-container">
+                        <p>Some other text..</p>
+                    </div>
+                    <button onclick="myFunction('Demo3')" class="w3-button w3-block w3-theme-l1 w3-left-align"><i class="fa fa-users fa-fw w3-margin-right"></i> My Photos</button>
+                    <div id="Demo3" class="w3-hide w3-container">
+                        <div class="w3-row-padding">
+                            <br>
+                            <div class="w3-half">
+                                <img src="./images/lights.jpg" style="width:100%" class="w3-margin-bottom">
+                            </div>
+                            <div class="w3-half">
+                                <img src="./images/nature.jpg" style="width:100%" class="w3-margin-bottom">
+                            </div>
+                            <div class="w3-half">
+                                <img src="./images/mountains.jpg" style="width:100%" class="w3-margin-bottom">
+                            </div>
+                            <div class="w3-half">
+                                <img src="./images/forest.jpg" style="width:100%" class="w3-margin-bottom">
+                            </div>
+                            <div class="w3-half">
+                                <img src="./images/nature.jpg" style="width:100%" class="w3-margin-bottom">
+                            </div>
+                            <div class="w3-half">
+                                <img src="./images/fjords.jpg" style="width:100%" class="w3-margin-bottom">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <br>
+
+            <!-- Interests -->
+            <div class="w3-card-2 w3-round w3-white w3-hide-small">
+                <div class="w3-container">
+                    <p>Interests</p>
+                    <p>
+                        <span class="w3-tag w3-small w3-theme-d5">News</span>
+                        <span class="w3-tag w3-small w3-theme-d4">W3Schools</span>
+                        <span class="w3-tag w3-small w3-theme-d3">Labels</span>
+                        <span class="w3-tag w3-small w3-theme-d2">Games</span>
+                        <span class="w3-tag w3-small w3-theme-d1">Friends</span>
+                        <span class="w3-tag w3-small w3-theme">Games</span>
+                        <span class="w3-tag w3-small w3-theme-l1">Friends</span>
+                        <span class="w3-tag w3-small w3-theme-l2">Food</span>
+                        <span class="w3-tag w3-small w3-theme-l3">Design</span>
+                        <span class="w3-tag w3-small w3-theme-l4">Art</span>
+                        <span class="w3-tag w3-small w3-theme-l5">Photos</span>
+                    </p>
+                </div>
+            </div>
+            <br>
+
+            <!-- Alert Box -->
+            <div class="w3-container w3-display-container w3-round w3-theme-l4 w3-border w3-theme-border w3-margin-bottom w3-hide-small">
+        <span onclick="this.parentElement.style.display='none'" class="w3-button w3-theme-l3 w3-display-topright">
+          <i class="fa fa-remove"></i>
+        </span>
+                <p><strong>Hey!</strong></p>
+                <p>People are looking at your profile. Find out who.</p>
+
+                <!-- upload test -->
+                <h1>File upload</h1>
+                Post a file to <code>/app/register/image</code> and display the server response
+                <br/>
+
+                <form action="/register/image" method="post" enctype="multipart/form-data" >
+                    <p>
+                        <label for="imageTest">Your picture:</label>
+                        <input type="file" name="imageTest" id="imageTest" multiple="multiple"/>
+                    </p>
+
+                    <p>
+                        <input type="submit"  value="Submit" name="submit"/>
+                    </p>
+                </form>
+                <!-- upload test -->
+
+            </div>
+
+            <!-- End Left Column -->
+        </div>
+
+
+        <!-- Middle Column -->
+        <div  id="kj-middle" class="w3-col m9">
+            <div id="main-stream" class="w3-col m10  ">
+                <div class="kj-card-2 w3-round w3-white w3-center" >
+                    <div id="kj-main" class="w3-container">
+                        <div id="bodies" >
+                            <div id="first-page" class="w3-cell-row" style="position:relative">
+                                <div class="w3-cell  ">
+                                    <div id="rtoolbar" class="kj-actbar-empty w3-mobile w3-hide">
+                                        <button id="pageAdd" class="w3-button w3-circle w3-red w3-small"><i class="fa fa-file-text"></i></button>
+                                        <button id="imageAdd" class="w3-button w3-circle w3-red w3-small"><i class="fa fa-image"></i></button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="saved_area" style="hidden"/>
+                    </div>
+                </div>
+            </div>
+
+
+
+            <!-- End Middle Column -->
+        </div>
+
+
+        <!-- End Grid -->
+    </div>
+
+    <!-- End Page Container -->
+</div>
+<br>
+
+<!-- Footer -->
+<footer class="w3-container w3-theme-d5">
+    <p>Powered by © 2017 StoryFactory</a></p>
+</footer>
+
+
+<script>
+// Accordion
+function myFunction(id) {
+    var x = document.getElementById(id);
+    if (x.className.indexOf("w3-show") == -1) {
+        x.className += " w3-show";
+        x.previousElementSibling.className += " w3-theme-d1";
+    } else {
+        x.className = x.className.replace("w3-show", "");
+        x.previousElementSibling.className =
+        x.previousElementSibling.className.replace(" w3-theme-d1", "");
+    }
+}
+
+// Used to toggle the menu on smaller screens when clicking on the menu button
+function openNav() {
+    var x = document.getElementById("navDemo");
+    if (x.className.indexOf("w3-show") == -1) {
+        x.className += " w3-show";
+    } else {
+        x.className = x.className.replace(" w3-show", "");
+    }
+}
+
+// Copy to clipborad
+function CopytoClip() {
+    var x = document.getElementById("ShareURL");
+    x.select();
+    document.execCommand('copy');
+    document.getElementById('ShareIt').style.display='none';
+}
+
+
+var winRef = null;
+function openGmail() {
+
+      //winRef = dom.window.open(docBase + s"show-popup4.html?objId=$objId","SHOW_DIALOG","width=500;height=300;overflow-y=scroll")
+      //winRef.focus()
+
+      if (winRef != null ) winRef.close()
+     winRef = window.open("gmail2.html", "_blank", "toolbar=yes,scrollbars=yes,resizable=yes,top=500,left=500,width=600,height=600");
+     winRef.focus();
+}
+</script>
+<script>
+
+  window.fbAsyncInit = function() {
+    FB.init({
+      appId      : '1719845414979964',
+      xfbml      : true,
+      version    : 'v2.9'
+    });
+    FB.AppEvents.logPageView();
+  };
+
+  (function(d, s, id){
+     var js, fjs = d.getElementsByTagName(s)[0];
+     if (d.getElementById(id)) {return;}
+     js = d.createElement(s); js.id = id;
+     js.src = "//connect.facebook.net/en_US/sdk.js";
+     fjs.parentNode.insertBefore(js, fjs);
+   }(document, 'script', 'facebook-jssdk'));
+
+</script>
+
+
+
+<script type="text/javascript" src="../example-fastopt.js"></script>
+<script type="text/javascript" src="/workbench.js"></script>
+<script>
+    cardnews.cnview().main(document.getElementById('kj-main'),document.getElementById('main-stream'));
+</script>
+
+
+
+
+</body></html>

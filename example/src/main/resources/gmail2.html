@@ -1,0 +1,225 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Gmail API demo</title>
+    <meta charset="UTF-8">
+
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css">
+    <style>
+      iframe {
+        width: 100%;
+        border: 0;
+        min-height: 80%;
+        height: 600px;
+        display: flex;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Gmail API demo</h1>
+
+      <button id="authorize-button" class="btn btn-primary ">Authorize</button>
+      <button id="signout-button" class="btn btn-primary hidden">SignOut</button>
+
+      <table class="table table-striped table-inbox ">
+        <thead>
+          <tr>
+            <th>From</th>
+            <th>Subject</th>
+            <th>Date/Time</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+
+    <script src="//code.jquery.com/jquery-1.11.3.min.js"></script>
+    <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+
+    <script type="text/javascript">
+      var CLIENT_ID = '632597599944-0qjjthgb31nobdiat6f12uqmu1snk5fj.apps.googleusercontent.com';
+      // KKJ var apiKey = 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx';
+
+      // KKJ Added : Array of API discovery doc URLs for APIs used by the quickstart
+      var DISCOVERY_DOCS = ["https://www.googleapis.com/discovery/v1/apis/gmail/v1/rest"];
+
+      var SCOPES = 'https://www.googleapis.com/auth/gmail.readonly';
+
+      var authorizeButton = document.getElementById('authorize-button');
+      var signoutButton = document.getElementById('signout-button');
+
+
+
+      function handleClientLoad() {
+        gapi.load('client:auth2', initClient);
+        // KKJ gapi.client.setApiKey(apiKey);
+        // KKJ window.setTimeout(checkAuth, 1);
+      }
+
+
+      /**
+       *  Initializes the API client library and sets up sign-in state
+       *  listeners.
+       */
+      function initClient() {
+        gapi.client.init({
+          discoveryDocs: DISCOVERY_DOCS,
+          clientId: CLIENT_ID,
+          scope: SCOPES
+        }).then(function () {
+          // Listen for sign-in state changes.
+          gapi.auth2.getAuthInstance().isSignedIn.listen(updateSigninStatus);
+
+          // Handle the initial sign-in state.
+          updateSigninStatus(gapi.auth2.getAuthInstance().isSignedIn.get());
+          authorizeButton.onclick = handleAuthClick;
+          signoutButton.onclick = handleSignoutClick;
+        });
+      }
+
+      /**
+       *  Sign in the user upon button click.
+       */
+      function handleAuthClick(event) {
+        gapi.auth2.getAuthInstance().signIn();
+      }
+
+      /**
+       *  Sign out the user upon button click.
+       */
+      function handleSignoutClick(event) {
+        gapi.auth2.getAuthInstance().signOut();
+      }
+
+      /**
+       *  Called when the signed in status changes, to update the UI
+       *  appropriately. After a sign-in, the API is called.
+       */
+      function updateSigninStatus(isSignedIn) {
+        if (isSignedIn) {
+          authorizeButton.style.display = 'none';
+          signoutButton.style.display = 'block';
+          //listLabels();
+          displayInbox();
+        } else {
+          authorizeButton.style.display = 'block';
+          signoutButton.style.display = 'none';
+        }
+      }
+
+
+      function displayInbox() {
+        var request = gapi.client.gmail.users.messages.list({
+          'userId': 'me',
+          'labelIds': 'INBOX',
+          'maxResults': 20
+        });
+
+        request.execute(function(response) {
+          $.each(response.messages, function() {
+            var messageRequest = gapi.client.gmail.users.messages.get({
+              'userId': 'me',
+              'id': this.id
+            });
+
+            messageRequest.execute(appendMessageRow);
+          });
+        });
+      }
+
+      function appendMessageRow(message) {
+        $('.table-inbox tbody').append(
+          '<tr>\
+            <td>'+getHeader(message.payload.headers, 'From')+'</td>\
+            <td>\
+              <a href="#message-modal-' + message.id +
+                '" data-toggle="modal" id="message-link-' + message.id+'">' +
+                getHeader(message.payload.headers, 'Subject') +
+              '</a>\
+            </td>\
+            <td>'+getHeader(message.payload.headers, 'Date')+'</td>\
+          </tr>'
+        );
+
+        $('body').append(
+          '<div class="modal fade" id="message-modal-' + message.id +
+              '" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">\
+            <div class="modal-dialog modal-lg">\
+              <div class="modal-content">\
+                <div class="modal-header">\
+                  <button type="button"\
+                          class="close"\
+                          data-dismiss="modal"\
+                          aria-label="Close">\
+                    <span aria-hidden="true">&times;</span></button>\
+                  <h4 class="modal-title" id="myModalLabel">' +
+                    getHeader(message.payload.headers, 'Subject') +
+                  '</h4>\
+                </div>\
+                <div class="modal-body">\
+                  <iframe id="message-iframe-'+message.id+'" srcdoc="<p>Loading...</p>">\
+                  </iframe>\
+                </div>\
+              </div>\
+            </div>\
+          </div>'
+        );
+
+        $('#message-link-'+message.id).on('click', function(){
+          var ifrm = $('#message-iframe-'+message.id)[0].contentWindow.document;
+          $('body', ifrm).html(getBody(message.payload));
+        });
+      }
+
+      function getHeader(headers, index) {
+        var header = '';
+
+        $.each(headers, function(){
+          if(this.name === index){
+            header = this.value;
+          }
+        });
+        return header;
+      }
+
+      function getBody(message) {
+        var encodedBody = '';
+        if(typeof message.parts === 'undefined')
+        {
+          encodedBody = message.body.data;
+        }
+        else
+        {
+          encodedBody = getHTMLPart(message.parts);
+        }
+        encodedBody = encodedBody.replace(/-/g, '+').replace(/_/g, '/').replace(/\s/g, '');
+        return decodeURIComponent(escape(window.atob(encodedBody)));
+      }
+
+      function getHTMLPart(arr) {
+        for(var x = 0; x <= arr.length; x++)
+        {
+          if(typeof arr[x].parts === 'undefined')
+          {
+            if(arr[x].mimeType === 'text/html')
+            {
+              return arr[x].body.data;
+            }
+          }
+          else
+          {
+            return getHTMLPart(arr[x].parts);
+          }
+        }
+        return '';
+      }
+    </script>
+    <!-- KKJ script src="https://apis.google.com/js/client.js?onload=handleClientLoad"></script> -->
+    <script async defer src="https://apis.google.com/js/api.js"
+            onload="this.onload=function(){};handleClientLoad()"
+            onreadystatechange="if (this.readyState === 'complete') this.onload()">
+    </script>
+  </body>
+</html>

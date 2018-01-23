@@ -1,0 +1,423 @@
+<html><head><title>Interactive Storytelling
+<?php
+
+    session_start();
+
+    echo "Story Factory ";
+
+    include './php/test_fblogin.php' ;
+
+    $user_id = "0000";
+    $user_name = "Create";
+    $user_pic = "./images/avatar3.png";
+    if(isset($_SESSION["facebook_id"])) {
+        $user_id = $_SESSION['facebook_id'];
+        $user_name = $_SESSION['facebook_name'];
+        $user_pic = $_COOKIE["user_pic"];
+    }
+
+// checking piwik server
+   $piwik_server = $_SERVER["piwik"] ;
+
+
+?>
+</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=0.9">
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+    <link rel="stylesheet" href="https://www.w3schools.com/lib/w3-theme-blue-grey.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="styles/style.css">
+
+    <!-- Chart library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.6.0/Chart.bundle.js"></script>
+    <script type="text/javascript" src="../scripts/story.common.js"></script>
+
+    <!-- JCrop library -->
+    <link rel="stylesheet" href="../styles/jquery.Jcrop.min.css">
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
+    <script src="../scripts/jquery.Jcrop.min.js"></script>
+
+    <!-jqery-resizable -->
+    <script src="scripts/jquery-resizable.min.js"></script>
+
+
+    <!-- Main Quill library -->
+    <script src="//cdn.quilljs.com/1.3.2/quill.js"  type="text/javascript" charset="UTF-8"></script>
+    <script src="//cdn.quilljs.com/1.3.2/quill.min.js"  type="text/javascript" charset="UTF-8"></script>
+
+    <!-- Theme included stylesheets -->
+    <link href="//cdn.quilljs.com/1.3.2/quill.snow.css" rel="stylesheet">
+    <link href="//cdn.quilljs.com/1.3.2/quill.bubble.css" rel="stylesheet">
+    <style>
+html,body,h1,h2,h3,h4,h5 {font-family: "Open Sans", sans-serif}
+</style>
+</head><body class="w3-theme-l5">
+
+<!-- CropIt Modal -->
+<div id="CropIt" class="w3-modal">
+    <div class="w3-modal-content">
+        <div class="w3-container kj-modal-header">
+            <span onclick="toggleJCrop();"
+                  class="w3-button w3-large w3-border w3-right">&times;</span>
+        </div>
+        <div class="w3-container w3-center kj-modal-crop">
+            <img id="theCropImage" src="../images/nature.jpg" alt="Picture"/>
+            <canvas id="previewImage" hidden></canvas>
+        </div>
+        <div class="w3-container kj-modal-footer">
+            <button id="CropItBtn" onclick="completeJCrop()" class="w3-button w3-border  w3-right w3-margin w3-small">Crop It</button>
+            <button onclick="toggleJCrop()" class="w3-button w3-border  w3-right w3-margin w3-small">Close</button>
+        </div>
+    </div>
+</div>
+
+
+<!-- Navbar -->
+<div class="kj-header w3-top">
+    <div class="w3-bar w3-theme-d2 w3-left-align w3-large">
+        <a class="w3-bar-item w3-button w3-hide-small w3-hide-medium w3-hide-large w3-right w3-padding-large w3-hover-white w3-large w3-theme-d2" href="javascript:void(0);" onclick="openNav()"><i class="fa fa-bars"></i></a>
+        <a href="post.html" class="w3-bar-item w3-button w3-padding-large w3-theme-d4"><i class="fa fa-home w3-margin-right"></i></a>
+        <a href="#" class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white" title="News"><i class="fa fa-globe"></i></a>
+        <a href="#" class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white" title="Account Settings"><i class="fa fa-user"></i></a>
+        <a href="#" class="w3-bar-item w3-button w3-padding-large w3-hover-white" title="Messages" onclick="openGmail()"><i class="fa fa-envelope"></i></a>
+        <div class="w3-dropdown-hover w3-hide-small">
+            <button class="w3-button w3-padding-large" title="Notifications"><i class="fa fa-bell"></i><span class="w3-badge w3-right w3-small w3-green">3</span></button>
+            <div class="w3-dropdown-content w3-card-4 w3-bar-block" style="width:300px">
+                <a href="#" class="w3-bar-item w3-button">One new friend request</a>
+                <a href="#" class="w3-bar-item w3-button">John Doe posted on your wall</a>
+                <a href="#" class="w3-bar-item w3-button">Jane likes your post</a>
+            </div>
+        </div>
+        <div class="w3-dropdown-hover">
+            <button class="w3-button w3-padding-large" title="Notifications">
+                <img src="<?php echo $user_pic;?>" class="w3-circle" style="height:25px;width:25px" alt="Avatar">
+            </button>
+            <div class="w3-dropdown-content w3-card-4 w3-bar-block">
+                <a href="#" class="w3-bar-item w3-button" onclick="fb_login('myhome.html')">My Home</a>
+                <a href="#" class="w3-bar-item w3-button" onclick="fb_login('myhome.html')">Account Setting</a>
+                <a href="#" class="w3-bar-item w3-button" onclick="fb_logout()">Logout</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Footer -->
+<div class="kj-header-2 w3-top">
+    <div class="w3-bar w3-grey w3-left-align">
+        <div id="kj-tab-pageid" class="kj-tab-page w3-white">
+            <button id="kj-pageid-xs" class="kj-page-xs w3-bar-item tabsize tooltip-fx w3-teal"><i class="fa fa-mobile"></i><span class="tooltiptext">XSmall</span></button>
+            <button id="kj-pageid-sm"class="kj-page-sm w3-bar-item tabsize tooltip-fx w3-grey"><i class="fa fa-tablet"></i><span class="tooltiptext">Small</span></button>
+            <button id="kj-pageid-md"class="kj-page-md w3-bar-item tabsize tooltip-fx w3-grey"><i class="fa fa-laptop"></i><span class="tooltiptext">Medium</span></button>
+            <button id="kj-pageid-lg"class="kj-page-lg w3-bar-item tabsize tooltip-fx w3-grey"><i class="fa fa-desktop"></i><span class="tooltiptext">Large</span></button>
+        </div>
+        <div  id="kj-tab-action" class="w3-right">
+            <button id="CardSave" class="w3-button w3-right w3-grey "><i class="fa fa-cloud-upload"></i> <span class="tooltiptext">Save</span></button>
+            <button id="CardDelete" class="w3-button w3-right w3-grey"><i class="fa fa-trash"></i> <span class="tooltiptext">Delete</span></button>
+            <button id="CardPreview" class="w3-button w3-right w3-grey "><i class="fa fa-eye"></i> <span class="tooltiptext">Preview</span></button>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+<!-- Navbar on small screens -->
+<div id="navDemo" class="w3-bar-block w3-theme-d2 w3-hide w3-hide-large w3-hide-medium w3-large">
+    <a href="list.html" class="w3-bar-item w3-button w3-padding-large">마이홈</a>
+    <a href="list.html" class="w3-bar-item w3-button w3-padding-large">마이홈</a>
+</div>
+
+<!-- Page Container -->
+<div class="kj-main-container">
+    <!-- The Grid -->
+    <div class="kj-panel-container">
+        <!-- Left Column -->
+
+
+        <!-- Middle Column -->
+        <div id="kj-middle" class="">
+            <div class="loader" hidden></div>
+            <div id="main-stream" class="">
+                <div id="kj-first-card" class="kj-card-2 w3-card-2 w3-center w3-round w3-white">
+                    <!--div id="kj-main" class="w3-container"-->
+                        <div id="bodies" class="kj-container">
+                            <div id="first-page" class="w3-cell-row kj-row" style="position:relative">
+                                <div class="w3-cell">
+                                    <div id="rtoolbar" class="kj-actbar-empty w3-mobile w3-hide">
+                                        <button id="pageAdd" class="w3-button w3-circle w3-red w3-small"><i class="fa fa-file-text"></i></button>
+                                        <button id="imageAdd" class="w3-button w3-circle w3-red w3-small"><i class="fa fa-image"></i></button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    <!--/div-->
+                </div>
+                <div id="page-end" class="kj-card-2" >
+                    <div class="w3-container w3-center">
+                        <div class="w3-margin">
+                            <button type="button" id="NewQuiz" class="w3-button w3-theme-d1 w3-circle"><i class="fa fa-plus"></i></button>
+                        </div>
+                    </div>
+                </div>
+                <div class="kj-card-2 w3-center w3-hide" >
+                    <div class="w3-margin">
+                        <button type="button" id="CardSaveOld" class="w3-button w3-theme-d1 "><i class="fa fa-thumbs-up"></i> &nbsp;Save</button>
+                        <button type="button" id="previewOld" class="w3-button w3-theme-d2 "><i class="fa fa-comment"></i> &nbsp;Preview</button>
+                        <button type="button" id="CardDeleteOld" class="w3-button w3-theme-d2"><i class="fa fa-trash"></i> &nbsp;Delete</button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        <!-- End Middle Column -->
+        <div class="splitter">
+        </div>
+
+        <div id="kj-right" class="kj-right-col w3-white w3-hide" >
+            <div class="kj-right-bar w3-blue">
+                <label id="kj-right-barid"> Page Option </label>
+            </div>
+            <div class="kj-right-object w3-bar w3-white">
+                <button class=" w3-bar-item tablink w3-teal w3-small"></button>
+                <button class=" w3-bar-item tablink w3-grey w3-small"></button>
+                <button class=" w3-bar-item tablink w3-grey w3-small"></button>
+            </div>
+            <div class="kj-right-tabs w3-bar w3-white">
+                <button class="kj-right-style w3-bar-item tablink tooltip-fx w3-teal"><i class="fa fa-paint-brush"></i><span class="tooltiptext">Style</span></button>
+                <button class="kj-right-option w3-bar-item tablink tooltip-fx w3-grey"><i class="fa fa-wrench"></i><span class="tooltiptext">Option</span></button>
+                <button class="kj-right-animate w3-bar-item tablink tooltip-fx w3-grey"><i class="fa fa-magic"></i><span class="tooltiptext">Animate</span></button>
+            </div>
+            <div class="w3-row kj-right-content  w3-gray w3-border">
+                <p>Upcoming Events:</p>
+                <img src="./images/forest.jpg" alt="Forest" style="width:100%;">
+                <p><strong>Holiday</strong></p>
+                <p>Friday 15:00</p>
+                <p><button class="w3-button w3-block w3-theme-l4">Info</button></p>
+            </div>
+        </div>
+        <!-- End Right Column -->
+
+        </div>
+        <!-- End Grid -->
+    </div>
+
+    <!-- End Page Container -->
+</div>
+<br>
+<!-- rightOpts Bar -->
+
+<!-- Context Menu see context.menu.js for event handling --------------->
+<nav id="context-menu" class="context-menu">
+    <ul class="context-menu__items">
+        <li class="context-menu__item">
+            <a href="#" class="context-menu__link" data-action="newCard"><i class="fa fa-credit-card-alt"></i> New Action Card</a>
+        </li>
+        <li class="context-menu__item">
+            <a href="#" class="context-menu__link" data-action="newTestCard"><i class="fa fa-check-square-o"></i> New Test Card</a>
+        </li>
+        <li class="context-menu__sepa" >
+            <hr/>
+        </li>
+        <li class="context-menu__item">
+            <a href="#" class="context-menu__link" data-action="pageAdd"><i class="fa fa-file-text"></i> New Text</a>
+        </li>
+        <li class="context-menu__item">
+            <a href="#" class="context-menu__link" data-action="imageAdd"><i class="fa fa-image"></i> New Image</a>
+        </li>
+        <li class="context-menu__item">
+            <a href="#" class="context-menu__link" data-action="flipAdd"><i class="fa fa-square-o"></i> New Flip</a>
+        </li>
+        <li class="context-menu__item">
+            <a href="#" class="context-menu__link" data-action="optAdd"><i class="fa fa-square-o"></i> New Action</a>
+        </li>
+        <li class="context-menu__item">
+            <a href="#" class="context-menu__link" data-action="typeTestAdd"><i class="fa fa-arrow-circle-right"></i> New Type Test</a>
+        </li>
+        <li class="context-menu__item">
+            <a href="#" class="context-menu__link" data-action="typeTestRes"><i class="fa fa-bar-chart"></i> New Type Result</a>
+        </li>
+        <li class="context-menu__item">
+            <a href="#" class="context-menu__link" data-action="typeTestBranch"><i class="fa fa-arrow-circle-right"></i> New Type Rule</a>
+        </li>
+        <li class="context-menu__item">
+            <a href="#" class="context-menu__link" data-action="Delete"><i class="fa fa-times"></i> Delete</a>
+        </li>
+    </ul>
+</nav>
+
+
+<script>
+// ******** Accordion handling **************
+function myFunction(id) {
+    var x = document.getElementById(id);
+    if (x.className.indexOf("w3-show") == -1) {
+        x.className += " w3-show";
+        x.previousElementSibling.className += " w3-theme-d1";
+    } else {
+        x.className = x.className.replace("w3-show", "");
+        x.previousElementSibling.className =
+        x.previousElementSibling.className.replace(" w3-theme-d1", "");
+    }
+}
+
+// Used to toggle the menu on smaller screens when clicking on the menu button
+function openNav() {
+    var x = document.getElementById("navDemo");
+    if (x.className.indexOf("w3-show") == -1) {
+        x.className += " w3-show";
+    } else {
+        x.className = x.className.replace(" w3-show", "");
+    }
+}
+
+//----------------------------------------------------------
+// ******** Resable handling **************
+
+$("#kj-middle").resizable({
+    handleSelector: ".splitter",
+    resizeHeight: false
+});
+
+
+<!-- facebook Login to myhome.html -->
+function fb_login(action,cb_save) {
+
+
+    var user_id = "<?php echo $user_id;?>" ;
+    //var user_id = "0000";
+    var user_name = "" ;
+    var user_pic = ""  ;
+//    if (user_id == "0000") { // not logged
+    if (user_id != "Always") { // not logged And check always
+        FB.login(function(response) {
+            if (response.authResponse) {
+             user_id = response.authResponse.userID;
+             //document.cookie = "user_id=" + user_id + ";" + "expires=Thu, 18 Dec 2099 12:00:00 UTC; path=/";
+             FB.api('/me', function(res) {
+               console.log('Good to see your name, ' + res.name);
+               user_name = encodeURI(res.name);
+               //document.cookie = "user_name=" + user_name + ";" + "expires=Thu, 18 Dec 2099 12:00:00 UTC; path=/";
+                 FB.api('/me/picture', function(image) {
+                   console.log('Good to see your image, ' + image.data.url);
+                   user_pic = image.data.url ;
+                   document.cookie = "user_pic=" + user_pic + ";" + "expires=Thu, 18 Dec 2099 12:00:00 UTC; path=/";
+                   console.log("Final"+document.cookie);
+
+                  _paq.push(['trackEvent', 'Click', 'Login', "fb" + user_id]);
+
+                   if (action == "callback") cb_save();
+                   else location.href = "myhome.html";
+                 });
+
+             },{scope: 'public_profile,email'});
+            } else {
+             alert("you're not logged in");
+             _paq.push(['trackEvent', 'Click', 'Login', 'fail']);
+             //location.href = "myhome.html";
+             //cb_save();
+            }
+        });
+    } else {
+        alert("you're not logged in");
+    }
+
+}
+
+<!-- facebook Logout  -->
+function fb_logout() {
+
+   //FB.getLoginStatus(function(response) {
+   //     if (response && response.status === 'connected') {
+            FB.logout(function(response) {
+                alert("you're logged out");
+            });
+   //     }
+   // });
+
+}
+
+
+
+</script>
+<script type="text/javascript" src="../scripts/context.menu.js"></script>
+<script type="text/javascript" src="../example-fastopt.js"></script>
+<script type="text/javascript" src="/workbench.js"></script>
+<script>
+     user_id =  "<?php echo  $user_id ?>";
+     user_name =  "<?php echo  $user_name ?>";
+     user_pic =  "<?php echo  $user_pic ?>";
+    cardnews.quiznews_php().main(document.getElementById('kj-first-card'), document.getElementById('bodies'),
+            document.getElementById('main-stream'),document.getElementById('page-end'),user_id,user_name,user_pic);
+</script>
+
+<!-- facebook initialize -->
+<script>
+
+  window.fbAsyncInit = function() {
+    FB.init({
+      appId      : '1719845414979964',
+      xfbml      : true,
+      cookie     : true,
+      version    : 'v2.9'
+    });
+    FB.AppEvents.logPageView();
+  };
+
+  (function(d, s, id){
+     var js, fjs = d.getElementsByTagName(s)[0];
+     if (d.getElementById(id)) {return;}
+     js = d.createElement(s); js.id = id;
+     js.src = "//connect.facebook.net/en_US/sdk.js";
+     fjs.parentNode.insertBefore(js, fjs);
+   }(document, 'script', 'facebook-jssdk'));
+
+
+
+</script>
+<!-- facebook initialize end -->
+
+<!-- Piwik -->
+<script type="text/javascript">
+    var piwik_server = "<?php echo $piwik_server;?>/" ;
+
+    //testing id parameter event
+    var pathname = location.pathname;
+    var mainidstr = pathname.substring(pathname.lastIndexOf('/') + 1).replace("post", "");
+
+
+  var _paq = _paq || [];
+  /* tracker methods like "setCustomDimension" should be called before "trackPageView" */
+  _paq.push(['trackPageView']);
+  _paq.push(['enableLinkTracking']);
+  _paq.push(['trackEvent', "Create","QuizNews",mainidstr]);
+
+  (function() {
+    var u= piwik_server;
+    _paq.push(['setTrackerUrl', u+'piwik.php']);
+    _paq.push(['setSiteId', '1']);
+    var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
+    g.type='text/javascript'; g.async=true; g.defer=true; g.src=u+'piwik.js'; s.parentNode.insertBefore(g,s);
+  })();
+</script>
+<!-- End Piwik Code -->
+
+<script>
+    window.onbeforeunload = function (e) {
+      if (document.getElementsByClassName("dirty").length > 0) {
+        var message = "Are you sure to leave without saving?",
+        e = e || window.event;
+        // For IE and Firefox
+        if (e) {
+            e.returnValue = message;
+        }
+
+        // For Safari
+        return message;
+      }
+    };
+
+</script>
+</body></html>

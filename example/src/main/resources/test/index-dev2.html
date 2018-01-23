@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Example Scala.js application</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+</head>
+<body style="margin: 0px">
+
+<div id="mine" style="postion:relative; width:1920px;height:1080px;z-index:-1;">
+  <canvas id="canvas" style="position:absolute; width:1920px; height:1080px; border:1px solid black;" />
+</div>
+
+
+
+<script type="text/javascript" src="../example-fastopt.js"></script>
+<script type="text/javascript" src="/workbench.js"></script>
+<script>
+parser.diaview2().main(document.getElementById('mine'),document.getElementById('canvas'), "http://192.168.1.222:7070/ea/diagram/getDiagramInfoData.do?PROD_ID=4eb7c47f-670e-49f2-b636-2ff5b734fbf7");
+</script>
+</body>
+</html>

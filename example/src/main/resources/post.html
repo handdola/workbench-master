@@ -1,0 +1,473 @@
+<html><head>
+<title>
+<?php
+session_start();
+
+echo "Story Factory ";
+
+include './php/test_fblogin.php' ;
+
+    $user_id = "0000";
+    $user_name = "Create";
+    $user_pic = "./images/avatar3.png";
+
+    if(isset($_SESSION["facebook_id"])) {
+	    $user_id = $_SESSION['facebook_id'];
+	    $user_name = $_SESSION['facebook_name'];
+        $user_pic = $_COOKIE["user_pic"];
+    }
+
+
+// checking subview mode
+    $subview = "default";
+
+    if(isset($_GET['subview']) && !empty($_GET['subview']))
+         $subview = $_GET['subview'];
+
+// checking piwik server
+   $piwik_server = $_SERVER["piwik"] ;
+
+
+
+ // find out $$storyTitle, $storyDesc, $storyImage from the ElasticSearch for facebook sharing
+ include './php/savePreview.php' ;
+
+?>
+</title>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=0.9">
+
+    <meta property="og:title" content="<?php echo $storyTitle;?>"  />
+    <meta property="og:description" content="<?php echo $storyDesc;?>" />
+    <meta property="og:image" content="<?php echo $storyImage;?>" />
+    <meta property="og:image:width" content="450"/>
+    <meta property="og:image:height" content="298"/>
+
+
+
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+    <link rel="stylesheet" href="https://www.w3schools.com/lib/w3-theme-blue-grey.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="styles/style.css">
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.6.0/Chart.bundle.js"></script>
+    <script type="text/javascript" src="../scripts/story.common.js"></script>
+
+    <!-- Main Quill library -->
+    <script src="//cdn.quilljs.com/1.2.4/quill.js"></script>
+    <script src="//cdn.quilljs.com/1.2.4/quill.min.js"></script>
+
+    <!-- Theme included stylesheets -->
+    <link href="//cdn.quilljs.com/1.2.4/quill.snow.css" rel="stylesheet">
+    <link href="//cdn.quilljs.com/1.2.4/quill.bubble.css" rel="stylesheet">
+    <style>
+html,body,h1,h2,h3,h4,h5 {font-family: "Open Sans", sans-serif}
+</style>
+</head><body class="w3-theme-l5">
+
+
+<!-- Navbar -->
+<div class="w3-top">
+    <div class="w3-bar w3-theme-d2 w3-left-align w3-large">
+        <a href="post.html?subview=default" id="defaultView" class="tabMenu w3-bar-item w3-button w3-padding-large" onclick="openNav(event)" ><i class="fa fa-home w3-margin-right"></i></a>
+        <a href="post.html?subview=hotcard" id="hotcardView" class="tabMenu w3-bar-item w3-button w3-padding-large w3-hover-white" onclick="openNav(event)" title="Hot Cards"><i class="fa fa-free-code-camp"></i></a>
+        <a href="#" class="w3-bar-item w3-button w3-padding-large w3-hover-white" title="Account Settings"><i class="fa fa-user"></i></a>
+        <a href="#" class="w3-bar-item w3-button w3-padding-large w3-hover-white" title="Messages" onclick="openGmail()"><i class="fa fa-envelope"></i></a>
+        <div class="w3-dropdown-hover w3-hide">
+            <button class="w3-button w3-padding-large" title="Notifications"><i class="fa fa-bell"></i><span class="w3-badge w3-right w3-small w3-green">3</span></button>
+            <div class="w3-dropdown-content w3-card-4 w3-bar-block" style="width:300px">
+                <a href="#" class="w3-bar-item w3-button">One new friend request</a>
+                <a href="#" class="w3-bar-item w3-button">John Doe posted on your wall</a>
+                <a href="#" class="w3-bar-item w3-button">Jane likes your post</a>
+            </div>
+        </div>
+        <div class="w3-dropdown-hover">
+            <button class="w3-button w3-padding-large" title="Notifications">
+                <img src="<?php echo $user_pic;?>" class="w3-circle" style="height:25px;width:25px" alt="Avatar">
+            </button>
+            <div class="w3-dropdown-content w3-card-4 w3-bar-block">
+                <a href="#" class="w3-bar-item w3-button" onclick="fb_login()">My Home</a>
+                <a href="#" class="w3-bar-item w3-button" onclick="fb_login()">Account Setting</a>
+                <a href="#" class="w3-bar-item w3-button" onclick="fb_logout()">Logout</a>
+            </div>
+        </div>
+
+
+    </div>
+</div>
+
+<!-- Navbar on small screens -->
+<div id="navDemo" class="w3-bar-block w3-theme-d2 w3-hide w3-hide-large w3-hide-medium w3-large">
+    <a href="list.html" class="w3-bar-item w3-button w3-padding-large">마이홈</a>
+    <a href="list.html" class="w3-bar-item w3-button w3-padding-large">마이홈</a>
+</div>
+
+<!-- Page Container -->
+<div class="awi-container w3-container">
+    <!-- The Modal -->
+    <div id="ShareIt" class="w3-modal">
+        <div class="w3-modal-content">
+            <div class="w3-container w3-margin-top">
+                <span onclick="document.getElementById('ShareIt').style.display='none'"
+                            class="w3-button w3-large  w3-border w3-display-topright">&times;</span>
+                <button id="LinkBtn" onclick="CopytoClip()" class="w3-button w3-border  w3-margin-top w3-small">Copy to Clipboard</button>
+                <input id="ShareURL" class="w3-margin-top w3-margin-bottom" style="width:100%" readonly> </input>
+            </div>
+        </div>
+    </div>
+    <!-- The Grid -->
+    <div id="view-left" class="w3-col w3-left w3-hide-small w3-hide-medium m4 l3 " >
+        <div class="w3-card-2 w3-round w3-white w3-center">
+            <div class="w3-container">
+                <p>Upcoming Events:</p>
+                <img src="./images/forest.jpg" alt="Forest" style="width:100%;">
+                <p><strong>Holiday</strong></p>
+                <p>Friday 15:00</p>
+                <p><button class="w3-button w3-block w3-theme-l4">Info</button></p>
+            </div>
+        </div>
+        <br>
+
+        <div class="w3-card-2 w3-round w3-white w3-padding-16 w3-center">
+            <p>ADS</p>
+        </div>
+        <br>
+
+        <div class="w3-card-2 w3-round w3-white w3-padding-32 w3-center">
+            <p><i class="fa fa-bug w3-xxlarge"></i></p>
+        </div>
+
+        <!-- End Right Column -->
+    </div>
+
+
+    <!-- Middle Column -->
+    <div id="view-main" class="w3-col s12 m10 l6">
+        <div class="loader" hidden></div>
+        <div class="kj-card-2 w3-white w3-round w3-hide" style="margin:0 0"><br>
+                        <div id="bodies" >
+                            <div class="w3-cell-row">
+                                <div class="w3-cell  " style="position:relative">
+                                    <div id="pages" class="w3-mobile" style="margin-left:100px">
+                                    </div>
+                                    <div id="rtoolbar" class="top-actbar w3-mobile w3-right">
+                                        <button id="pageAdd" class="w3-button w3-circle w3-red w3-small"><i class="fa fa-file-text"></i></button>
+                                        <button id="imageAdd" class="w3-button w3-circle w3-red w3-small"><i class="fa fa-image"></i></button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+        </div>
+
+        <div id="page-end" class="kj-card-2 kj-card-more" >
+            <div class="w3-container w3-center">
+                <div class="w3-margin">
+                    <button type="button" id="MoreCard" class="w3-button w3-theme-d1 w3-circle"><i class="fa fa-plus"></i></button>
+                </div>
+            </div>
+        </div>
+        <!-- End Middle Column -->
+    </div>
+
+
+
+        <!-- End Grid -->
+
+    <!-- End Page Container -->
+</div>
+<br>
+
+<!-- Footer -->
+<footer class="w3-hide w3-theme-d5">
+    <p>© 2017 StoryFactory</p>
+
+    <!-- test of goolg + Sharing -->
+    <!-- Place the tag where you want the button to render -->
+    <button
+            class="g-interactivepost w3-hide"
+            data-contenturl="http://localpc.com:12345/post/1"
+            data-contentdeeplinkid="/pages"
+            data-clientid="632597599944-0qjjthgb31nobdiat6f12uqmu1snk5fj.apps.googleusercontent.com"
+            data-cookiepolicy="single_host_origin"
+            data-prefilltext="Engage your users today, create a Google+ page for your business."
+            data-calltoactionlabel="CREATE"
+            data-calltoactionurl="http://localpc.com:12345/post/2"
+            data-calltoactiondeeplinkid="/pages/create">
+        <!--Tell your friends -->
+    </button>
+</footer>
+
+
+<script>
+// Accordion ---------------------------------------------
+function myFunction(id) {
+    var x = document.getElementById(id);
+    if (x.className.indexOf("w3-show") == -1) {
+        x.className += " w3-show";
+        x.previousElementSibling.className += " w3-theme-d1";
+    } else {
+        x.className = x.className.replace("w3-show", "");
+        x.previousElementSibling.className =
+        x.previousElementSibling.className.replace(" w3-theme-d1", "");
+    }
+}
+
+
+// Used to toggle the menu on smaller screens when clicking on the menu button
+function openNav(evt) {
+  var i, x, tabmenus;
+  tabmenus = document.getElementsByClassName("tabMenu");
+  for (i = 0; i < tabmenus.length; i++) {
+      tabmenus[i].className = tabmenus[i].className.replace(" w3-red", "");
+  }
+  evt.currentTarget.className += " w3-red";
+}
+
+//------------------------------- Copy to clipborad
+function CopytoClip() {
+    var x = document.getElementById("ShareURL");
+    x.select();
+    document.execCommand('copy');
+    document.getElementById('ShareIt').style.display='none';
+}
+
+
+var winRef = null;
+function openGmail() {
+
+      //winRef = dom.window.open(docBase + s"show-popup4.html?objId=$objId","SHOW_DIALOG","width=500;height=300;overflow-y=scroll")
+      //winRef.focus()
+
+      if (winRef != null ) winRef.close()
+     winRef = window.open("gmail2.html", "_blank", "toolbar=yes,scrollbars=yes,resizable=yes,top=500,left=500,width=600,height=600");
+     winRef.focus();
+}
+
+<!-- facebook API test #1 -->
+
+function openFace() {
+
+FB.api(
+  '/me/feed',
+  'GET',
+  {},
+  function(response) {
+      console.log(response);
+  }
+);
+
+}
+
+<!-- facebook API test #2-->
+
+
+function openFace1() {
+
+FB.login(function(response) {
+    if (response.authResponse) {
+     console.log('Welcome!  Fetching your information.... ');
+     FB.api('/me', function(response) {
+       console.log('Good to see you, ueer_posts' + response.name + '.');
+     },{scope: 'public_profile,email,user_posts'});
+
+     FB.api(
+          '/me/feed',
+          'GET',
+          {},
+          function(response) {
+              console.log ("/me/feed");
+              console.log(response);
+          }
+        );
+    } else {
+     console.log('User cancelled login or did not fully authorize.');
+    }
+});
+
+}
+
+<!-- facebook API test #3-->
+
+function openFace2() {
+
+FB.login(function(response) {
+    if (response.authResponse) {
+     console.log('Welcome!  Fetching your information.... ');
+     FB.api('/me', function(response) {
+       console.log('Good to see you, manage_pages ' + response.name + '.');
+     },{scope: 'public_profile,email,manage_pages'});
+
+     FB.api(
+          '/me/accounts',
+          'GET',
+          function(response) {
+              console.log ("/me/accounts");
+              console.log(response);
+          }
+        );
+    } else {
+     console.log('User cancelled login or did not fully authorize.');
+    }
+});
+
+}
+
+<!-- facebook Login to myhome.html -->
+function fb_login() {
+
+
+    var user_id = "<?php echo $user_id;?>" ;
+    //var user_id = "0000";
+    var user_name = "" ;
+    var user_pic = ""  ;
+//    if (user_id == "0000") { // not logged
+    if (user_id != "Always") { // not logged And check always
+        FB.login(function(response) {
+            if (response.authResponse) {
+             user_id = response.authResponse.userID;
+             //document.cookie = "user_id=" + user_id + ";" + "expires=Thu, 18 Dec 2099 12:00:00 UTC; path=/";
+             FB.api('/me', function(res) {
+               console.log('Good to see your name, ' + res.name);
+               user_name = encodeURI(res.name);
+               //document.cookie = "user_name=" + user_name + ";" + "expires=Thu, 18 Dec 2099 12:00:00 UTC; path=/";
+                 FB.api('/me/picture', function(image) {
+                   console.log('Good to see your image, ' + image.data.url);
+                   user_pic = image.data.url ;
+                   document.cookie = "user_pic=" + user_pic + ";" + "expires=Thu, 18 Dec 2099 12:00:00 UTC; path=/";
+                   console.log("Final"+document.cookie);
+
+                  _paq.push(['trackEvent', 'Click', 'Login', "fb" + user_id]);
+
+                   location.href = "myhome.html";
+                 });
+
+             },{scope: 'public_profile,email'});
+            } else {
+             alert("you're not logged in");
+             _paq.push(['trackEvent', 'Click', 'Login', 'fail']);
+             location.href = "myhome.html";
+            }
+        });
+    } else {
+        alert("you're not logged in");
+    }
+
+}
+
+<!-- facebook Logout  -->
+function fb_logout() {
+
+   //FB.getLoginStatus(function(response) {
+   //     if (response && response.status === 'connected') {
+            FB.logout(function(response) {
+                alert("you're logged out");
+            });
+   //     }
+   // });
+
+}
+
+
+
+</script>
+
+<script type="text/javascript" src="../example-fastopt.js"></script>
+<script type="text/javascript" src="/workbench.js"></script>
+<script>
+
+    var subview = "<?php echo $subview;?>" ;
+    if (subview == "default") document.getElementById('defaultView').className += " w3-red";
+    if (subview == "hotcard") document.getElementById('hotcardView').className += " w3-red";
+
+    cardnews.cnpost_php().main("post", subview, document.getElementById('view-main'),document.getElementById('view-main'));
+
+</script>
+
+
+<!-- facebook initialize -->
+<script>
+
+  window.fbAsyncInit = function() {
+    FB.init({
+      appId      : '1719845414979964',
+      xfbml      : true,
+      cookie     : true,
+      version    : 'v2.9'
+    });
+    FB.AppEvents.logPageView();
+  };
+
+  (function(d, s, id){
+     var js, fjs = d.getElementsByTagName(s)[0];
+     if (d.getElementById(id)) {return;}
+     js = d.createElement(s); js.id = id;
+     js.src = "//connect.facebook.net/en_US/sdk.js";
+     fjs.parentNode.insertBefore(js, fjs);
+   }(document, 'script', 'facebook-jssdk'));
+
+
+
+</script>
+<!-- facebook initialize end -->
+
+<!-- Piwik -->
+<script type="text/javascript">
+
+    var piwik_server = "<?php echo $piwik_server;?>/" ;
+
+    //testing id parameter event
+    var pathname = location.pathname;
+    var mainidstr = pathname.substring(pathname.lastIndexOf('/') + 1).replace("post", "");
+
+
+
+  var _paq = _paq || [];
+  /* tracker methods like "setCustomDimension" should be called before "trackPageView" */
+  _paq.push(['setCustomDimension', 1, mainidstr]);
+  _paq.push(['trackPageView']);
+  _paq.push(['enableLinkTracking']);
+  _paq.push(['trackAllContentImpressions']);
+  _paq.push(['trackEvent', "Play","Load",mainidstr]);
+
+  (function() {
+    // var u="//story.miridas.com:9400/";
+    var u= piwik_server;
+    _paq.push(['setTrackerUrl', u+'piwik.php']);
+    _paq.push(['setSiteId', '1']);
+    var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
+    g.type='text/javascript'; g.async=true; g.defer=true; g.src=u+'piwik.js'; s.parentNode.insertBefore(g,s);
+  })();
+
+ function piwik_event_push(category, action, name) {
+    //_paq.push(['trackEvent', 'Click', 'Login', "fb" + user_id]);
+    _paq.push(['trackEvent', category, action, name]);
+ }
+
+ function piwik_content_impress(name, piece, target) {
+    _paq.push(['trackContentImpression', name, piece, target]);
+ }
+
+ function piwik_content_action(action, name, piece, target) {
+    _paq.push(['trackContentInteraction', action, name, piece, target]);
+ }
+
+</script>
+<!-- End Piwik Code -->
+
+
+<!-- google+ initialize -
+
+<script >
+  window.___gcfg = {
+    lang: 'ko-KR',
+    parsetags: 'onload'
+  };
+</script>
+<script src="https://apis.google.com/js/client:platform.js" async defer></script>
+
+ google+ initialize end -->
+
+
+</body></html>
