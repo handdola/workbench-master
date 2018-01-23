@@ -1,8 +1,6 @@
 workbench 0.3.0
 ---------------
 
-![Example](https://github.com/lihaoyi/scala-js-workbench/blob/master/Example.png?raw=true)
-
 A SBT plugin for [scala-js](https://github.com/lampepfl/scala-js) projects to make development in the browser more pleasant.
 
 - Spins up a local web server on (by default) `localhost:12345`, whenever you're in the SBT console. Navigate to localhost:12345 in the browser and it'll show a simple page tell you it's alive. You can access any file within your project directory by going to `localhost:12345/path/to/file` in a browser.
